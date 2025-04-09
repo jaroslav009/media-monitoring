@@ -62,5 +62,8 @@ const main = async () => {
 // });
 
 cron.schedule("0 6 * * *", () => {
-  main();
+  mainSearch();
+});
+cron.schedule("0 7 * * *", () => {
+  mainSummorize();
 });
