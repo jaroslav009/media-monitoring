@@ -2,7 +2,7 @@
 
 # Start both react + express apps concurrently
 ./node_modules/.bin/concurrently \
-  --names "www,api" \
+  --names "api" \
   --handle-input true \
   --default-input-target 1 \
   --kill-others \

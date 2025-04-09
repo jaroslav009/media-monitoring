@@ -1,27 +1,66 @@
-const express = require('express')
-require('dotenv').config()
-const postgres = require('@metamodules/postgres')()
+import { aiSummorrize } from "./aiSummorize.js";
+import { getAllNewsInfo } from "./get-news-info.js";
+import { bootstrapSheet } from "./sheet-util.js";
+import { LocalStorage as LocalStorageLib } from "node-localstorage";
+import cron from "node-cron";
 
-const app = express()
-const port = 4000
+import dotenv from "dotenv";
+dotenv.config();
 
-postgres.query(`CREATE TABLE IF NOT EXISTS clicks (
-  id BIGSERIAL PRIMARY KEY,
-  created_at TIMESTAMP DEFAULT NOW()
-)`)
+global.localStorage = new LocalStorageLib("./scratch");
 
-app.get('/api/count', (req, res) => {
-  postgres.query('SELECT count(*) AS count FROM clicks', (err, resp) => {
-    res.send({ count: resp.rows[0].count || 0 })
-  })
-})
+const SEARCH_TYPE = ["search-1", "search-2", "search-3"];
 
-app.post('/api/count/increment', (req, res) => {
-  postgres.query('INSERT INTO clicks DEFAULT VALUES', (err, insert) => {
-    postgres.query('SELECT count(*) AS count FROM clicks', (err, resp) => {
-      res.send({ count: resp.rows[0].count || 0 })
-    })
-  })
-})
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = LocalStorageLib;
+  localStorage = new LocalStorage("./scratch");
+}
 
-app.listen(port, () => console.log(`Example backend API listening on port ${port}!`))
+export const exponentialBackoff = (retries) => {
+  return new Promise((resolve) => {
+    const delay = Math.pow(2, retries) + Math.random();
+    setTimeout(resolve, delay * 1000); // Convert to milliseconds
+  });
+};
+
+const mainSearch = async () => {
+  for (const typeSearch of SEARCH_TYPE) {
+    console.log("Start search", typeSearch);
+    const response = await getAllNewsInfo(typeSearch);
+    // console.log(response);
+    await bootstrapSheet(response, typeSearch);
+  }
+  // const response = await getAllNewsInfo("search-3");
+  // await bootstrapSheet(response, "search-3");
+  // await aiSummorrize("search-1");
+};
+//
+// mainSearch();
+
+const mainSummorize = async () => {
+  for (const typeSearch of SEARCH_TYPE) {
+    console.log("Start search", typeSearch);
+    await exponentialBackoff(2);
+    await aiSummorrize(typeSearch);
+  }
+  // await aiSummorrize("search-3");
+};
+
+// mainSummorize();
+
+const main = async () => {
+  await mainSearch();
+  // await mainSummorize();
+};
+
+cron.schedule("1,2,4,5 * * * *", () => {
+  console.log("running every minute 1, 2, 4 and 5");
+});
+
+cron.schedule("* * * * *", () => {
+  console.log("running a task every minute");
+});
+
+// cron.schedule("0 6 * * *", () => {
+//   main();
+// });
