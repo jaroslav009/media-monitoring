@@ -50,9 +50,9 @@ const mainSummorize = async () => {
 
 const main = async () => {
   await mainSearch();
-  // await mainSummorize();
+  await mainSummorize();
 };
-
+main();
 // cron.schedule("1,2,4,5 * * * *", () => {
 //   console.log("running every minute 1, 2, 4 and 5");
 // });
@@ -61,9 +61,9 @@ const main = async () => {
 //   console.log("running a task every minute");
 // });
 
-cron.schedule("0 6 * * *", () => {
-  mainSearch();
-});
-cron.schedule("0 7 * * *", () => {
-  mainSummorize();
-});
+// cron.schedule("0 6 * * *", () => {
+//   mainSearch();
+// });
+// cron.schedule("0 7 * * *", () => {
+//   mainSummorize();
+// });
