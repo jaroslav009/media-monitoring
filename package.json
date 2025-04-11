@@ -2,6 +2,9 @@
   "name": "media-monitoring",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.14.0"
+  },
   "dependencies": {
     "dotenv": "^8.0.0",
     "google-auth-library": "^9.15.1",
