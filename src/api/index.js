@@ -52,7 +52,7 @@ const main = async () => {
   await mainSearch();
   await mainSummorize();
 };
-main();
+// main();
 // cron.schedule("1,2,4,5 * * * *", () => {
 //   console.log("running every minute 1, 2, 4 and 5");
 // });
@@ -61,9 +61,17 @@ main();
 //   console.log("running a task every minute");
 // });
 
-// cron.schedule("0 6 * * *", () => {
-//   mainSearch();
-// });
-// cron.schedule("0 7 * * *", () => {
-//   mainSummorize();
-// });
+cron.schedule(
+  "0 6 * * *",
+  () => {
+    mainSearch();
+  },
+  { timezone: "America/New_York" }
+);
+cron.schedule(
+  "0 7 * * *",
+  () => {
+    mainSummorize();
+  },
+  { timezone: "America/New_York" }
+);
