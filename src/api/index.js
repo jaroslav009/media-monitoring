@@ -24,24 +24,27 @@ export const exponentialBackoff = (retries) => {
 };
 
 const mainSearch = async () => {
+  const listNews = {};
   for (const typeSearch of SEARCH_TYPE) {
     console.log("Start search", typeSearch);
     const response = await getAllNewsInfo(typeSearch);
     // console.log(response);
-    await bootstrapSheet(response, typeSearch);
+    const position = await bootstrapSheet(response, typeSearch);
+    listNews[typeSearch] = position;
   }
   // const response = await getAllNewsInfo("search-3");
   // await bootstrapSheet(response, "search-3");
   // await aiSummorrize("search-1");
+  return listNews;
 };
 //
 // mainSearch();
 
-const mainSummorize = async () => {
+const mainSummorize = async (listNews) => {
   for (const typeSearch of SEARCH_TYPE) {
     console.log("Start search", typeSearch);
     await exponentialBackoff(2);
-    await aiSummorrize(typeSearch);
+    await aiSummorrize(typeSearch, listNews[typeSearch]);
   }
   // await aiSummorrize("search-3");
 };
@@ -49,8 +52,8 @@ const mainSummorize = async () => {
 // mainSummorize();
 
 const main = async () => {
-  await mainSearch();
-  await mainSummorize();
+  const listNews = await mainSearch();
+  await mainSummorize(listNews);
 };
 // main();
 // cron.schedule("1,2,4,5 * * * *", () => {
@@ -62,16 +65,17 @@ const main = async () => {
 // });
 
 cron.schedule(
-  "0 6 * * *",
-  () => {
-    mainSearch();
+  "35 14 * * *",
+  async () => {
+    const listNews = await mainSearch();
+    await mainSummorize(listNews);
   },
-  { timezone: "America/New_York" }
+  { timezone: "Europe/Kiev" }
 );
-cron.schedule(
-  "0 7 * * *",
-  () => {
-    mainSummorize();
-  },
-  { timezone: "America/New_York" }
-);
+// cron.schedule(
+//   "0 7 * * *",
+//   () => {
+//     mainSummorize();
+//   },
+//   { timezone: "America/New_York" }
+// );

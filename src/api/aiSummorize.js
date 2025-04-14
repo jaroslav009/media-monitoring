@@ -29,7 +29,7 @@ const doc = new GoogleSpreadsheet(
   serviceAccountAuth
 );
 
-export const aiSummorrize = async (typeSearch) => {
+export const aiSummorrize = async (typeSearch, listNews) => {
   await doc.loadInfo(); // loads document properties and worksheets
 
   const sheet =
@@ -43,9 +43,10 @@ export const aiSummorrize = async (typeSearch) => {
   // const lastArticles = JSON.parse(localStorage.getItem("last-articles"));
   const resArr = [];
   // return console.log(lastArticles);
-  const lastArticlesPosition = JSON.parse(
-    localStorage.getItem(`last-articles-position-${typeSearch}`)
-  );
+  // const lastArticlesPosition = JSON.parse(
+  //   localStorage.getItem(`last-articles-position-${typeSearch}`)
+  // );
+  const lastArticlesPosition = listNews;
   console.log("lastArticlesPosition", lastArticlesPosition);
 
   if (lastArticlesPosition) {

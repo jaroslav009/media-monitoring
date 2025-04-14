@@ -134,6 +134,7 @@ export const setNewsInfo = async (newsInfo, sheetInfo, typeSearch) => {
 
   console.log("Ended set news info", newsInfo.length);
   await sheet.saveUpdatedCells();
+  return { rowMaxIndex, columnIndex };
 };
 
 export const findReasoning = (text, type) => {
@@ -181,5 +182,6 @@ export const editCellAi = async (cell, aiInfo, typeSearch) => {
 
 export const bootstrapSheet = async (newsInfo, typeSearch) => {
   const sheetInfo = await setHeaderRow(typeSearch);
-  await setNewsInfo(newsInfo, sheetInfo, typeSearch);
+  const position = await setNewsInfo(newsInfo, sheetInfo, typeSearch);
+  return position;
 };
